@@ -1,6 +1,8 @@
-use crate::utils::detector::with_detector;
+use crate::models::info::BboxInfo;
+use crate::modules::mosaic;
+use crate::utils::detector::DETECTOR;
 
-pub fn detect(rgba: &[u8], width: u32, height: u32) -> Vec<Info> {
+pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<BboxInfo> {
     // RGBA 画像をグレースケールに変換。
     let grayscale = rgba
         .chunks(4)
@@ -13,16 +15,28 @@ pub fn detect(rgba: &[u8], width: u32, height: u32) -> Vec<Info> {
     let img = rustface::ImageData::new(&grayscale, width, height);
 
     // グローバル変数に保持している検出器を取得
-    with_detector(|detector| {
+    DETECTOR.with(|detector| {
+        let Some(ref mut detector) = *detector.borrow_mut() else {
+            return vec![];
+        };
+        // 検出
         detector
             .detect(&img)
             .iter()
             // x, y 座標、幅、高さだけ抜き出す
-            .map(|info| Info {
-                x: info.bbox().x(),
-                y: info.bbox().y(),
-                width: info.bbox().width(),
-                height: info.bbox().height(),
+            .map(|info| {
+                let x = info.bbox().x();
+                let y = info.bbox().y();
+                let mosaic = mosaic::mosaic(
+                    rgba,
+                    width,
+                    x,
+                    y,
+                    info.bbox().width(),
+                    info.bbox().height(),
+                    block_size,
+                );
+                BboxInfo::new(x, y, mosaic)
             })
             .collect()
     })

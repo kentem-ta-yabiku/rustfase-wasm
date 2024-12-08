@@ -1,5 +1,7 @@
+use models::info::BboxInfo;
 use wasm_bindgen::prelude::wasm_bindgen;
 
+pub mod models;
 mod modules;
 mod utils;
 
@@ -16,4 +18,14 @@ pub fn setup_detector(
         pyramid_scale_factor,
         slide_window_step,
     )
+}
+
+#[wasm_bindgen]
+pub fn detect_bounding_box(
+    rgba: &[u8],
+    width: u32,
+    height: u32,
+    block_size: usize,
+) -> Vec<BboxInfo> {
+    modules::detect::detect(rgba, width, height, block_size)
 }
