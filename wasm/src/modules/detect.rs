@@ -1,8 +1,15 @@
-use crate::models::info::BboxInfo;
 use crate::modules::mosaic;
+use crate::modules::replace;
 use crate::utils::detector::DETECTOR;
 
-pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<BboxInfo> {
+pub fn detect(
+    rgba: &[u8],
+    width: u32,
+    height: u32,
+    block_size: Option<usize>,
+    overlay: &[u8],
+    is_mosaic: bool,
+) -> Vec<u8> {
     // RGBA 画像をグレースケールに変換。
     let grayscale = rgba
         .chunks(4)
@@ -13,6 +20,9 @@ pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<Bb
 
     // ImageData 形式に変換
     let img = rustface::ImageData::new(&grayscale, width, height);
+
+    // 検出結果を格納するための Vec<u8>
+    let mut result: Vec<u8> = Vec::new();
 
     // グローバル変数に保持している検出器を取得
     DETECTOR.with(|detector| {
@@ -27,17 +37,36 @@ pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<Bb
             .map(|info| {
                 let x = info.bbox().x();
                 let y = info.bbox().y();
-                let mosaic = mosaic::mosaic(
-                    rgba,
-                    width,
-                    x,
-                    y,
-                    info.bbox().width(),
-                    info.bbox().height(),
-                    block_size,
-                );
-                BboxInfo::new(x, y, mosaic)
+                if is_mosaic {
+                    let mosaic_result = mosaic::mosaic(
+                        rgba,
+                        x,
+                        y,
+                        info.bbox().width(),
+                        info.bbox().height(),
+                        match block_size {
+                            Some(size) => size,
+                            None => 0,
+                        },
+                    );
+                    if let Ok(mosaic_img) = mosaic_result {
+                        result.extend(mosaic_img);
+                    }
+                } else {
+                    let replace_result = replace::replace(
+                        rgba,
+                        overlay,
+                        x,
+                        y,
+                        info.bbox().width(),
+                        info.bbox().height(),
+                    );
+                    if let Ok(replace_img) = replace_result {
+                        result.extend(replace_img);
+                    }
+                }
             })
             .collect()
-    })
+    });
+    result
 }

@@ -27,7 +27,7 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const sliderRef = useRef(null);
     const [fps, setFps] = useState<number>();
-    const [blockSize, setBlockSize] = useState(10);
+    const blockSize = useRef<number>(10)
 
     useEffect(() => {
         if (!videoStream) return;
@@ -54,17 +54,17 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
             ctx.drawImage(video, 0, 0, width, height);
             const rgba = ctx.getImageData(0, 0, width, height).data;
 
-            const detectedData = detect_bounding_box(new Uint8Array(rgba), width, height, blockSize);
+            const detectedData = detect_bounding_box(new Uint8Array(rgba), width, height, blockSize.current);
             detectedData.forEach((info: BboxInfo) => {
                 const top = info.x();
                 const left = info.y();
 
                 info.mosaic.forEach((row, j) => {
                     row.cols().forEach((rgb, i) => {
-                        const x = top + i * blockSize;
-                        const y = left + j * blockSize;
+                        const x = top + i * blockSize.current;
+                        const y = left + j * blockSize.current;
                         ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                        ctx.fillRect(x, y, blockSize, blockSize);
+                        ctx.fillRect(x, y, blockSize.current, blockSize.current);
                     });
                 });
             });
@@ -80,10 +80,10 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
         };
 
         initialize();
-    }, [videoStream, blockSize, width, height]);
+    }, [videoStream, width, height]);
 
     const handleSliderChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-        setBlockSize(Number(e.target.value));
+        blockSize.current = Number(e.target.value);
     };
 
     return (
@@ -92,12 +92,12 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
             <input
                 type="range"
                 min="5"
-                max="50"
-                value={blockSize}
+                max="30"
+                value={blockSize.current}
                 ref={sliderRef}
                 onChange={handleSliderChange}
             />
-            <div>Block size: {blockSize}</div>
+            <div>Block size: {blockSize.current}</div>
             <div>FPS: {fps}</div>
         </div>
     );
