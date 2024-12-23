@@ -1,8 +1,16 @@
 use crate::models::info::BboxInfo;
 use crate::modules::mosaic;
+use crate::modules::resize;
 use crate::utils::detector::DETECTOR;
 
-pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<BboxInfo> {
+pub fn detect(
+    rgba: &[u8],
+    width: u32,
+    height: u32,
+    block_size: usize,
+    is_mosaic: bool,
+    overlay_image: &[u8],
+) -> Vec<BboxInfo> {
     // RGBA 画像をグレースケールに変換。
     let grayscale = rgba
         .chunks(4)
@@ -27,6 +35,10 @@ pub fn detect(rgba: &[u8], width: u32, height: u32, block_size: usize) -> Vec<Bb
             .map(|info| {
                 let x = info.bbox().x();
                 let y = info.bbox().y();
+                if !is_mosaic {
+                    let resize = resize::resize(overlay_image, width, height);
+                    return BboxInfo::new(x, y, resize);
+                }
                 let mosaic = mosaic::mosaic(
                     rgba,
                     width,

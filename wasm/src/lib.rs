@@ -26,6 +26,8 @@ pub fn detect_bounding_box(
     width: u32,
     height: u32,
     block_size: usize,
+    is_mosaic: bool,
+    overlay_image: &[u8],
 ) -> Vec<BboxInfo> {
-    modules::detect::detect(rgba, width, height, block_size)
+    modules::detect::detect(rgba, width, height, block_size, is_mosaic, overlay_image)
 }
