@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import styles from "./VideoFeed.module.css";
 
 type Props = {
   stream?: MediaStream
@@ -13,7 +14,7 @@ const VideoFeed = ({ stream }: Props) => {
         }
     }, [stream]);
 
-    return <video ref={videoRef} autoPlay muted id="video-feed" />;
+    return <video ref={videoRef} autoPlay muted id="video-feed" className={styles.hiddenVideo} />;
 };
 
 export default VideoFeed;

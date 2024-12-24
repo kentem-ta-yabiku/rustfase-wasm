@@ -1,6 +1,7 @@
 import VideoFeed from "./components/VideoFeed";
 import CanvasDisplay from "./components/CanvasDisplay";
 import { useWebcam } from "./hooks/useWebcam";
+import styles from "./App.module.css";
 
 const App = () => {
     const width = 320;
@@ -8,8 +9,8 @@ const App = () => {
     const videoStream = useWebcam({width, height});
 
     return (
-        <div>
-            <h1>Face Detection App</h1>
+        <div className={styles.appContainer}>
+            <h1 className={styles.title}>Face Detection App</h1>
             <VideoFeed stream={videoStream} />
             <CanvasDisplay videoStream={videoStream} width={width} height={height} />
         </div>
@@ -17,3 +18,4 @@ const App = () => {
 };
 
 export default App;
+

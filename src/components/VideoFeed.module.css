@@ -1,0 +1,7 @@
+.hiddenVideo {
+  width: 1px; /* サイズを最小化 */
+  height: 1px;
+  opacity: 0; /* 透明にする */
+  position: absolute; /* 他の要素の影響を受けないように配置 */
+  pointer-events: none; /* クリックなどの操作を無効化 */
+}
