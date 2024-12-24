@@ -1,7 +1,5 @@
-use models::info::BboxInfo;
 use wasm_bindgen::prelude::wasm_bindgen;
 
-pub mod models;
 mod modules;
 mod utils;
 
@@ -25,7 +23,9 @@ pub fn detect_bounding_box(
     rgba: &[u8],
     width: u32,
     height: u32,
-    block_size: usize,
-) -> Vec<BboxInfo> {
-    modules::detect::detect(rgba, width, height, block_size)
+    block_size: Option<usize>,
+    overlay: &[u8],
+    is_mosaic: bool,
+) -> Vec<u8> {
+    modules::detect::detect(rgba, width, height, block_size, overlay, is_mosaic)
 }
