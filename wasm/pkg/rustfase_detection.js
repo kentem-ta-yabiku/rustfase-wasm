@@ -327,12 +327,6 @@ function __wbg_get_imports() {
         const ret = BboxInfo.__wrap(arg0);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_error_fab41a42d22bf2bc = function(arg0) {
-        console.error(getObject(arg0));
-    };
-    imports.wbg.__wbg_log_464d1b2190ca1e04 = function(arg0) {
-        console.log(getObject(arg0));
-    };
     imports.wbg.__wbg_rgb_new = function(arg0) {
         const ret = Rgb.__wrap(arg0);
         return addHeapObject(ret);
@@ -347,10 +341,6 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
-    };
-    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
-        const ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
     };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));

@@ -36,7 +36,15 @@ pub fn detect(
                 let x = info.bbox().x();
                 let y = info.bbox().y();
                 if !is_mosaic {
-                    let resize = resize::resize(overlay_image, width, height);
+                    let resize = resize::resize(
+                        overlay_image,
+                        width,
+                        height,
+                        x,
+                        y,
+                        info.bbox().width(),
+                        info.bbox().height(),
+                    );
                     return BboxInfo::new(x, y, resize);
                 }
                 let mosaic = mosaic::mosaic(

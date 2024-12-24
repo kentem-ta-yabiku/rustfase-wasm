@@ -93,7 +93,8 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
             ctx.drawImage(video, 0, 0, width, height);
             const rgba = ctx.getImageData(0, 0, width, height).data;
             const overlayImage = imageData?.data ?? createRedImage();
-            let detectedData: BboxInfo[] = detect_bounding_box(new Uint8Array(rgba), width, height, blockSize.current, isMosaic.current, new Uint8Array(overlayImage));
+            const bs = isMosaic ? blockSize.current : 1;
+            let detectedData: BboxInfo[] = detect_bounding_box(new Uint8Array(rgba), width, height, bs, isMosaic.current, new Uint8Array(overlayImage));
 
             detectedData.forEach((info: BboxInfo) => {
                 const top = info.x();
@@ -101,10 +102,10 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
 
                 info.mosaic.forEach((row, j) => {
                     row.cols().forEach((rgb, i) => {
-                        const x = top + i * blockSize.current;
-                        const y = left + j * blockSize.current;
+                        const x = top + i * bs;
+                        const y = left + j * bs;
                         ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                        ctx.fillRect(x, y, blockSize.current, blockSize.current);
+                        ctx.fillRect(x, y, bs, bs);
                     });
                 });
             });
