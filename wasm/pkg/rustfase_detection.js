@@ -98,23 +98,19 @@ function passArray8ToWasm0(arg, malloc) {
  * @param {number} width
  * @param {number} height
  * @param {number} block_size
- * @param {boolean} is_mosaic
- * @param {Uint8Array} overlay_image
  * @returns {(BboxInfo)[]}
  */
-export function detect_bounding_box(rgba, width, height, block_size, is_mosaic, overlay_image) {
+export function detect_bounding_box(rgba, width, height, block_size) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passArray8ToWasm0(rgba, wasm.__wbindgen_export_1);
         const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passArray8ToWasm0(overlay_image, wasm.__wbindgen_export_1);
-        const len1 = WASM_VECTOR_LEN;
-        wasm.detect_bounding_box(retptr, ptr0, len0, width, height, block_size, is_mosaic, ptr1, len1);
+        wasm.detect_bounding_box(retptr, ptr0, len0, width, height, block_size);
         var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
         var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
-        var v3 = getArrayJsValueFromWasm0(r0, r1).slice();
+        var v2 = getArrayJsValueFromWasm0(r0, r1).slice();
         wasm.__wbindgen_export_0(r0, r1 * 4, 4);
-        return v3;
+        return v2;
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }

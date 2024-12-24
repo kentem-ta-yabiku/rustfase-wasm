@@ -30,19 +30,6 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
     const blockSize = useRef(10);
     const isMosaic = useRef(true);
 
-    // const createRedImage = () => {
-    //   const size = 500 * 500 * 4;
-  
-    //   // 赤色のUint8Arrayを直接作成（RGBA = 255, 0, 0, 255）
-    //   const imageData = new Uint8Array(size).fill(0);  // 全て0で初期化
-    //   for (let i = 0; i < size; i += 4) {
-    //     imageData[i] = 255;  // R (赤)
-    //     imageData[i + 3] = 255;  // A (アルファ)
-    //   }
-
-    //   return imageData;
-    // }
-
     useEffect(() => {
         if (!videoStream) return;
         const canvas = canvasRef.current;
@@ -67,9 +54,8 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
 
             ctx.drawImage(video, 0, 0, width, height);
             const rgba = ctx.getImageData(0, 0, width, height).data;
-            const bs = blockSize.current
             if (isMosaic.current) {
-              let detectedData: BboxInfo[] = detect_bounding_box(new Uint8Array(rgba), width, height, (isMosaic ? bs : 1), true, new Uint8Array());
+              let detectedData: BboxInfo[] = detect_bounding_box(new Uint8Array(rgba), width, height, blockSize.current);
               let viewArray: string[] = [];
               detectedData.forEach((info: BboxInfo) => {
                   const top = info.x();
@@ -77,11 +63,11 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
   
                   info.mosaic.forEach((row, j) => {
                       row.cols().forEach((rgb, i) => {
-                          const x = top + i * (isMosaic ? bs : 1);
-                          const y = left + j * (isMosaic ? bs : 1);
+                          const x = top + i * (isMosaic ? blockSize.current : 1);
+                          const y = left + j * (isMosaic ? blockSize.current : 1);
                           ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
                           viewArray = [...viewArray, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`]
-                          ctx.fillRect(x, y, (isMosaic ? bs : 1), (isMosaic ? bs : 1));
+                          ctx.fillRect(x, y, (isMosaic ? blockSize.current : 1), (isMosaic ? blockSize.current : 1));
                       });
                   });
               });

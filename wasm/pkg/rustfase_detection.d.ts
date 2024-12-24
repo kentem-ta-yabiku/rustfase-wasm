@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export function setup_detector(min_face_sizes: number, score_thresh: number, pyramid_scale_factor: number, slide_window_step: number): void;
-export function detect_bounding_box(rgba: Uint8Array, width: number, height: number, block_size: number, is_mosaic: boolean, overlay_image: Uint8Array): (BboxInfo)[];
+export function detect_bounding_box(rgba: Uint8Array, width: number, height: number, block_size: number): (BboxInfo)[];
 export class BboxInfo {
   private constructor();
   free(): void;
@@ -39,7 +39,7 @@ export interface InitOutput {
   readonly rgb_g: (a: number) => number;
   readonly rgb_b: (a: number) => number;
   readonly setup_detector: (a: number, b: number, c: number, d: number) => void;
-  readonly detect_bounding_box: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
+  readonly detect_bounding_box: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_export_0: (a: number, b: number, c: number) => void;
   readonly __wbindgen_export_1: (a: number, b: number) => number;

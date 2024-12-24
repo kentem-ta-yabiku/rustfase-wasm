@@ -10,7 +10,7 @@ const App = () => {
 
     return (
         <div className={styles.appContainer}>
-            <h1 className={styles.title}>Face Detection App</h1>
+            <h1 className={styles.title}>映る者、皆モザイク</h1>
             <VideoFeed stream={videoStream} />
             <CanvasDisplay videoStream={videoStream} width={width} height={height} />
         </div>
