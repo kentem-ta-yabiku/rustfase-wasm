@@ -56,7 +56,6 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
             const rgba = ctx.getImageData(0, 0, width, height).data;
             if (isMosaic.current) {
               let detectedData: BboxInfo[] = detect_bounding_box(new Uint8Array(rgba), width, height, blockSize.current);
-              let viewArray: string[] = [];
               detectedData.forEach((info: BboxInfo) => {
                   const top = info.x();
                   const left = info.y();
@@ -66,13 +65,10 @@ const CanvasDisplay = ({ videoStream, width, height }: Props) => {
                           const x = top + i * (isMosaic ? blockSize.current : 1);
                           const y = left + j * (isMosaic ? blockSize.current : 1);
                           ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                          viewArray = [...viewArray, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`]
                           ctx.fillRect(x, y, (isMosaic ? blockSize.current : 1), (isMosaic ? blockSize.current : 1));
                       });
                   });
               });
-  
-              console.log(viewArray);
             }
 
             showFps();
